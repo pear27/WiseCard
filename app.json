@@ -39,13 +39,17 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-font",
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
     },
     "extra": {
+      "kakaoNativeAppKey": "ad2e16ce72ceebe8234ec46a8e8eddf5",
       "router": {},
       "eas": {
         "projectId": "50a42c74-f340-4b1b-9178-1c342606b169"

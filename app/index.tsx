@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import { router } from "expo-router";
+import { Pressable, Text, View } from "react-native";
 
 export default function Index() {
   return (
@@ -10,6 +11,13 @@ export default function Index() {
       }}
     >
       <Text>Edit app/index.tsx to edit this screen.</Text>
+      <Pressable
+        onPress={() => {
+          router.replace("/OnboardingScreen");
+        }}
+      >
+        title="Go to Onboarding"{" "}
+      </Pressable>
     </View>
   );
 }
