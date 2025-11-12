@@ -30,6 +30,9 @@ export default function RootLayout() {
 
   const [fontsLoaded] = useFonts({
     AntonRegular: require("../assets/fonts/Anton-Regular.ttf"),
+    FreesentationMedium: require("../assets/fonts/Freesentation-5Medium.ttf"),
+    FreesentationExtraBold: require("../assets/fonts/Freesentation-8ExtraBold.ttf"),
+    FreesentationBlack: require("../assets/fonts/Freesentation-9Black.ttf"),
   });
 
   if (!fontsLoaded) return null;
