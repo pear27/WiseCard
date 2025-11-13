@@ -8,6 +8,7 @@ import {
 } from "@/src/hooks/useCards";
 import { BackButtonStyles } from "@/src/styles/buttons/BackBtn";
 import { CategoryButtonStyles } from "@/src/styles/buttons/CategoryBtn";
+import { DeleteActionButtonStyles } from "@/src/styles/buttons/DeleteActionBtn";
 import Colors from "@/src/styles/colors";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
@@ -427,30 +428,6 @@ const styles = StyleSheet.create({
   },
   scroll: {
     paddingHorizontal: 10,
-  },
-});
-
-const DeleteActionButtonStyles = StyleSheet.create({
-  materialButton: {
-    backgroundColor: "white",
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 40,
-    paddingHorizontal: 60,
-    height: 40,
-    borderRadius: 28,
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "red",
-  },
-  buttonContents: {
-    color: "red",
-    fontSize: 16,
-    lineHeight: 20,
-    fontWeight: "400",
-    overflow: "hidden",
-    includeFontPadding: false, // Android에서 불필요한 여백 제거
-    textAlignVertical: "center",
   },
 });
 
