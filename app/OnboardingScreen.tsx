@@ -5,7 +5,14 @@ import Colors from "@/src/styles/colors";
 import axios from "axios";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Alert, Button, Modal, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
 import { SocialLoginButton } from "./components/Button";
@@ -90,9 +97,14 @@ export default function OnboardingScreen() {
           />
         </View>
       </View>
-      <Modal visible={showWebView} animationType="slide">
-        <SafeAreaView style={{ flex: 1 }}>
-          <Button title="닫기" onPress={() => setShowWebView(false)} />
+      <Modal transparent visible={showWebView} animationType="slide">
+        <SafeAreaView style={{ flex: 1, borderRadius: 20, overflow: "hidden" }}>
+          <TouchableOpacity
+            style={styles.modalCloseButton}
+            onPress={() => setShowWebView(false)}
+          >
+            <Text style={styles.modalCloseButtonText}>닫기</Text>
+          </TouchableOpacity>
           <WebView source={{ uri: authUrl }} onMessage={handleMessage} />
         </SafeAreaView>
       </Modal>
@@ -131,7 +143,14 @@ const styles = StyleSheet.create({
   buttonContainer: {
     gap: 16,
   },
-  signupText: {
-    alignSelf: "center",
+  modalCloseButton: {
+    padding: 10,
+    backgroundColor: Colors.PRIMARY_BLUE,
+    alignItems: "center",
+  },
+  modalCloseButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
