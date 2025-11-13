@@ -1,6 +1,7 @@
 import { BackButtonStyles } from "@/src/styles/buttons/BackBtn";
 import { DeleteActionButtonStyles } from "@/src/styles/buttons/DeleteActionBtn";
 import Colors from "@/src/styles/colors";
+import { getAppInfo } from "@/src/utils/appInfo";
 import {
   getAccessToken,
   getRefreshToken,
@@ -13,6 +14,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ActionButton, MenuButton } from "./components/Button";
 
 export default function SettingsScreen() {
+  const appInfo = getAppInfo();
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -54,6 +57,13 @@ export default function SettingsScreen() {
           }}
           stylesSet={DeleteActionButtonStyles}
         />
+        <View style={{ alignItems: "center" }}>
+          <Text>
+            Version: {appInfo.version}
+            {appInfo.buildNumber ?? `(${appInfo.buildNumber})`}
+          </Text>
+          <Text>Expo SDK: {appInfo.expoSdkVersion}</Text>
+        </View>
       </View>
     </SafeAreaView>
   );
