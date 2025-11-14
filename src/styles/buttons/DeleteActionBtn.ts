@@ -5,7 +5,7 @@ export const DeleteActionButtonStyles = StyleSheet.create({
     backgroundColor: "white",
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 40,
+    marginVertical: 10,
     paddingHorizontal: 60,
     height: 40,
     borderRadius: 28,

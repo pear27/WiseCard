@@ -1,9 +1,9 @@
-import { cardCompanies } from "@/src/constants/cardCompanies";
-import { Card, cardExamples } from "@/src/constants/cardExamples";
+import { CARD_TYPES, cardCompanies } from "@/src/constants/cardCompanies";
 import { addUserCard, CardFilters, filterCards } from "@/src/hooks/useCards";
 import { BackButtonStyles } from "@/src/styles/buttons/BackBtn";
 import { CategoryButtonStyles } from "@/src/styles/buttons/CategoryBtn";
 import Colors from "@/src/styles/colors";
+import { Card } from "@/src/types/Cards";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -20,15 +20,10 @@ import { Dropdown } from "./components/DropDown";
 import SearchBar from "./components/SearchBar";
 
 export default function AddCardsScreen() {
-  const CARD_TYPES = [
-    { key: "credit", title: "신용카드" },
-    { key: "debit", title: "체크카드" },
-  ];
-
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBank, setSelectedBank] = useState<string>("HANA");
   const [selectedCardType, setSelectedCardType] = useState<string | null>(
-    "credit"
+    "CREDIT"
   );
 
   // 검색어 입력 핸들러 (카드 이름 검색)
@@ -49,7 +44,7 @@ export default function AddCardsScreen() {
   const fetchCards = async () => {
     const cardFilter: CardFilters = {};
 
-    if (selectedBank) cardFilter.cardBank = selectedBank;
+    if (selectedBank) cardFilter.cardCompany = selectedBank;
     if (selectedCardType) cardFilter.cardType = selectedCardType;
     if (searchQuery !== "") cardFilter.cardName = searchQuery;
 
@@ -58,9 +53,7 @@ export default function AddCardsScreen() {
       const data = await filterCards(cardFilter);
 
       if (data.length == 0) {
-        /* data example */
-        setCardList(cardExamples);
-        /* data example */
+        setCardList([]);
       } else {
         setCardList(data);
       }
@@ -83,14 +76,15 @@ export default function AddCardsScreen() {
 
     try {
       const res = await addUserCard(cardId);
-      console.log(res);
-      alert("카드 등록이 완료되었습니다.");
-      setSelectedCardId(null);
-      //TODO: 성공일 경우 "성공적으로 카드 등록" alert
-
-      //TODO: 이미 등록된 카드일 경우 "이미 등록된 카드" alert
+      if (res) {
+        alert("카드 등록이 완료되었습니다.");
+      } else {
+        alert("이미 등록된 카드입니다.");
+      }
     } catch (err) {
       console.error(err);
+    } finally {
+      setSelectedCardId(null);
     }
   };
 
@@ -143,38 +137,58 @@ export default function AddCardsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
       >
-        {cardList.map((card) => (
-          <View key={card.cardId}>
-            <TouchableOpacity
-              style={styles.cardBlock}
-              onPress={() => handleCardSelect(card.cardId)}
-            >
-              <Image
-                source={
-                  card.imgUrl && card.imgUrl.trim() !== ""
-                    ? { uri: card.imgUrl }
-                    : require("../assets/images/card_example.png")
-                }
-                style={styles.cardImage}
-              />
-              <View>
-                <Text style={styles.cardName}>{card.cardName}</Text>
-                {/* 모든 혜택 description 출력 */}
-              </View>
-            </TouchableOpacity>
-            {/* 내 카드에 추가하기 버튼 - 선택된 경우에만 표시 */}
-            {selectedCardId === card.cardId && (
-              <View>
-                <Text>{card.benefits.summary}</Text>
-                <ActionButton
-                  title={"내 카드에 추가하기"}
-                  onPress={() => handleAddCard(card.cardId)}
-                  stylesSet={AddActionButtonStyles}
-                />
-              </View>
-            )}
+        {cardList.length == 0 ? (
+          <View style={{ alignItems: "center", marginTop: 50 }}>
+            <Text>카드가 존재하지 않습니다.</Text>
           </View>
-        ))}
+        ) : (
+          cardList.map((card) => (
+            <View key={card.cardId}>
+              <TouchableOpacity
+                style={styles.cardBlock}
+                onPress={() => handleCardSelect(card.cardId)}
+              >
+                <Image
+                  source={
+                    card.imgUrl && card.imgUrl.trim() !== ""
+                      ? { uri: card.imgUrl }
+                      : require("../assets/images/card_example.png")
+                  }
+                  style={styles.cardImage}
+                />
+                <View style={{ flexShrink: 1 }}>
+                  <Text style={styles.cardName}>{card.cardName}</Text>
+                </View>
+              </TouchableOpacity>
+              {selectedCardId === card.cardId && (
+                <View>
+                  {/* 혜택 summary */}
+                  <View>
+                    {card.benefits.map((benefit, index) => (
+                      <Text
+                        key={index}
+                        style={{
+                          marginHorizontal: 10,
+                          marginBottom: 8,
+                          fontSize: 15,
+                          color: "#555",
+                        }}
+                      >
+                        {benefit.summary}
+                      </Text>
+                    ))}
+                  </View>
+                  {/* 내 카드에 추가하기 버튼 */}
+                  <ActionButton
+                    title={"내 카드에 추가하기"}
+                    onPress={() => handleAddCard(card.cardId)}
+                    stylesSet={AddActionButtonStyles}
+                  />
+                </View>
+              )}
+            </View>
+          ))
+        )}
       </ScrollView>
     </SafeAreaView>
   );

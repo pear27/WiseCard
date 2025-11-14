@@ -1,5 +1,4 @@
-import { cardCompanies } from "@/src/constants/cardCompanies";
-import { Card } from "@/src/constants/cardExamples";
+import { CARD_TYPES, cardCompanies } from "@/src/constants/cardCompanies";
 import { categories } from "@/src/constants/categories";
 import {
   CardFilters,
@@ -10,12 +9,14 @@ import { BackButtonStyles } from "@/src/styles/buttons/BackBtn";
 import { CategoryButtonStyles } from "@/src/styles/buttons/CategoryBtn";
 import { DeleteActionButtonStyles } from "@/src/styles/buttons/DeleteActionBtn";
 import Colors from "@/src/styles/colors";
+import { Card } from "@/src/types/Cards";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   FlatList,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -30,11 +31,6 @@ const CARD_PREVIEW_WIDTH = 25;
 const CARD_SPACING = 10;
 
 export default function MyCardsScreen() {
-  const CARD_TYPES = [
-    { key: "credit", title: "신용카드" },
-    { key: "debit", title: "체크카드" },
-  ];
-
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBank, setSelectedBank] = useState<string | null>(null);
   const [selectedCardType, setSelectedCardType] = useState<string | null>(null);
@@ -73,7 +69,7 @@ export default function MyCardsScreen() {
   const fetchUserCards = async () => {
     const cardFilter: CardFilters = {};
 
-    if (selectedBank) cardFilter.cardBank = selectedBank;
+    if (selectedBank) cardFilter.cardCompany = selectedBank;
     if (selectedCardType) cardFilter.cardType = selectedCardType;
     if (searchQuery !== "") cardFilter.cardName = searchQuery;
 
@@ -82,44 +78,18 @@ export default function MyCardsScreen() {
     try {
       const data = await getUserCards(cardFilter);
 
-      if (data.length == 0) {
-        setCardList([
-          {
-            cardId: 0,
-            cardName: "",
-            imgUrl: undefined,
-            benefits: {
-              discounts: [],
-              points: [],
-              cashbacks: [],
-              applicableCategory: [],
-              applicableTargets: [],
-              summary: "",
-            },
-            cardCompany: undefined,
-            cardType: "add",
-          },
-        ]); // 리스트 마지막에 카드 추가 버튼
-      } else {
-        setCardList([
-          ...data,
-          {
-            cardId: 0,
-            cardName: "",
-            imgUrl: undefined,
-            benefits: {
-              discounts: [],
-              points: [],
-              cashbacks: [],
-              applicableCategory: [],
-              applicableTargets: [],
-              summary: "",
-            },
-            cardCompany: undefined,
-            cardType: "add",
-          },
-        ]);
-      }
+      setCardList([
+        ...data,
+        {
+          cardId: 0,
+          cardName: "",
+          imgUrl: undefined,
+          benefits: [],
+          cardCompany: undefined,
+          cardType: "add",
+          cardUrl: null,
+        }, // 리스트 마지막에 카드 추가 버튼
+      ]);
     } catch (err) {
       console.error("검색 요청 실패:", err);
     }
@@ -215,7 +185,7 @@ export default function MyCardsScreen() {
         </View>
       </View>
       <View
-        style={{ marginHorizontal: -30 }}
+        style={styles.cardContainer}
         onLayout={(event) => {
           const { width } = event.nativeEvent.layout;
           setCardWidth(width - 60);
@@ -265,7 +235,7 @@ export default function MyCardsScreen() {
                 </TouchableOpacity>
               ) : (
                 <Image
-                  source={{ uri: item.imgUrl }}
+                  source={{ uri: item.imgUrl ?? undefined }}
                   resizeMode="cover"
                   style={{
                     width: "100%",
@@ -281,101 +251,75 @@ export default function MyCardsScreen() {
         />
       </View>
       {/* 카드 정보 영역 */}
-      <View style={{ marginTop: 20, alignItems: "center" }}>
+      <View style={styles.cardDataContainer}>
+        {/* 카드 이름 */}
         <Text style={{ fontSize: 18, fontWeight: "bold" }}>
           {cardList[activeIndex]?.cardName}
         </Text>
-        {/* 모든 혜택 description 출력 */}
-        <View>
-          {/* 카드 혜택 카테고리 출력 */}
-          <View style={{ flexDirection: "row", gap: 4, marginVertical: 7 }}>
-            {cardList[activeIndex]?.benefits.applicableCategory.length > 0 &&
-              cardList[activeIndex]?.benefits.applicableCategory
-                .slice(0, 3)
-                .map((code) => {
-                  const category = categories.find((cat) => cat.code === code);
-                  return category ? (
-                    <CategoryButton
-                      icon={category.icon}
-                      key={category.value} // 예: cafe
-                      title={category.label} // 예: 카페
-                      onPress={() => {}}
-                      selected={true}
-                      stylesSet={CardCategoryStyles}
-                    />
-                  ) : null;
-                })}
-            {cardList[activeIndex]?.benefits.applicableCategory.length > 3 && (
-              <Text>
-                외{" "}
-                {cardList[activeIndex].benefits.applicableCategory.length - 3}개
-              </Text>
-            )}
-          </View>
-          {/* 최대 혜택 rate(amount) 출력 */}
-          <View style={{ alignItems: "center" }}>
-            {cardList[activeIndex]?.benefits.discounts.length > 0 &&
-              (() => {
-                const maxDiscount = cardList[
-                  activeIndex
-                ]?.benefits.discounts.reduce((max, discount) => {
-                  const value = discount.rate ?? discount.amount ?? 0;
-                  const maxValue = max.rate ?? max.amount ?? 0;
-                  return value > maxValue ? discount : max;
-                }, cardList[activeIndex]?.benefits.discounts[0]);
+        {/* 혜택 카테고리 */}
+        {(() => {
+          const allCategories = [
+            ...new Set(
+              (cardList[activeIndex]?.benefits || []).flatMap(
+                (benefit) => benefit.categories || []
+              )
+            ),
+          ];
 
-                return (
-                  <Text>
-                    {maxDiscount.rate
-                      ? `최대 ${(maxDiscount.rate * 100).toFixed(0)}% 할인`
-                      : `최대 ${maxDiscount.amount}원 할인`}
-                  </Text>
-                );
-              })()}
+          const categoryButtons = allCategories.map((catCode) => {
+            const category = categories.find((cat) => cat.code === catCode);
+            return category ? (
+              <CategoryButton
+                key={category.value}
+                icon={category.icon}
+                title={category.label}
+                onPress={() => {}}
+                selected={true}
+                stylesSet={CardCategoryStyles}
+              />
+            ) : null;
+          });
 
-            {cardList[activeIndex]?.benefits.points.length > 0 &&
-              (() => {
-                const maxPoint = cardList[activeIndex]?.benefits.points.reduce(
-                  (max, point) => {
-                    const value = point.rate ?? point.amount ?? 0;
-                    const maxValue = max.rate ?? max.amount ?? 0;
-                    return value > maxValue ? point : max;
-                  },
-                  cardList[activeIndex]?.benefits.points[0]
-                );
+          return (
+            <View
+              style={{
+                marginVertical: 10,
+                flexDirection: "row",
+                flexWrap: "wrap",
+                justifyContent: "center",
+                gap: 5,
+              }}
+            >
+              {categoryButtons}
+            </View>
+          );
+        })()}
+        {/* 혜택 요약 */}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{ maxHeight: 200 }}
+          nestedScrollEnabled={true} // iOS/Android 중첩 스크롤 대응
+        >
+          {cardList[activeIndex]?.benefits?.map((benefit, index) => (
+            <View key={index}>
+              {/* summary */}
+              {benefit.summary && (
+                <Text
+                  style={{
+                    marginHorizontal: 10,
+                    marginBottom: 8,
+                    fontSize: 15,
+                    color: "#555",
+                  }}
+                >
+                  {benefit.summary}
+                </Text>
+              )}
+            </View>
+          ))}
+        </ScrollView>
 
-                return (
-                  <Text>
-                    {maxPoint.rate
-                      ? `최대 ${(maxPoint.rate * 100).toFixed(0)}% 포인트 적립`
-                      : `최대 ${maxPoint.amount}원 포인트 적립`}
-                  </Text>
-                );
-              })()}
-
-            {cardList[activeIndex]?.benefits.cashbacks.length > 0 &&
-              (() => {
-                const maxCashback = cardList[
-                  activeIndex
-                ]?.benefits.cashbacks.reduce((max, cashback) => {
-                  const value = cashback.rate ?? cashback.amount ?? 0;
-                  const maxValue = max.rate ?? max.amount ?? 0;
-                  return value > maxValue ? cashback : max;
-                }, cardList[activeIndex]?.benefits.cashbacks[0]);
-
-                return (
-                  <Text>
-                    {maxCashback.rate
-                      ? `최대 ${(maxCashback.rate * 100).toFixed(0)}% 캐시백`
-                      : `최대 ${maxCashback.amount}원 캐시백`}
-                  </Text>
-                );
-              })()}
-          </View>
-          {/**
-           * <Text>{cardList[activeIndex]?.benefits.summary}</Text>
-           */}
-        </View>
+        {/* 카드 삭제 버튼 */}
         {cardList[activeIndex]?.cardType !== "add" && (
           <ActionButton
             title={"카드 삭제하기"}
@@ -416,6 +360,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     width: "100%",
     gap: 8,
+  },
+  cardContainer: {
+    marginHorizontal: -30,
+  },
+  cardDataContainer: {
+    marginTop: 20,
+    alignItems: "center",
   },
   categoryContainer: {
     flexDirection: "row",
