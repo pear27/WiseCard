@@ -72,12 +72,6 @@ export default function SettingsScreen() {
         </View>
       </View>
       <View>
-        <View style={styles.itemContainer}>
-          <Text style={styles.itemText}>푸쉬 알림 수집</Text>
-          <Text style={styles.itemDetail}>
-            카드 사용 내역 푸쉬 알림을 분석해 맞춤형 혜택 정보를 제공합니다.
-          </Text>
-        </View>
         <Pressable style={styles.itemContainer} onPress={() => handleContact()}>
           <Text style={styles.itemText}>문의하기</Text>
           <Text style={styles.itemDetail}>
