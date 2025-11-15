@@ -8,7 +8,6 @@ interface LoginResult {
 }
 
 const backend_url = process.env.EXPO_PUBLIC_BACKEND_URL;
-const KAKAO_REST_API_KEY = process.env.EXPO_PUBLIC_KAKAO_REST_API_KEY;
 
 export async function sendCodeToBackend(
   kakaoAccessToken: string
