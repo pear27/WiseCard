@@ -164,19 +164,20 @@ export default function AddCardsScreen() {
                 <View>
                   {/* 혜택 summary */}
                   <View>
-                    {card.benefits.map((benefit, index) => (
-                      <Text
-                        key={index}
-                        style={{
-                          marginHorizontal: 10,
-                          marginBottom: 8,
-                          fontSize: 15,
-                          color: "#555",
-                        }}
-                      >
-                        {benefit.summary}
-                      </Text>
-                    ))}
+                    {card.benefits &&
+                      card.benefits.map((benefit, index) => (
+                        <Text
+                          key={index}
+                          style={{
+                            marginHorizontal: 10,
+                            marginBottom: 8,
+                            fontSize: 15,
+                            color: "#555",
+                          }}
+                        >
+                          {benefit.summary}
+                        </Text>
+                      ))}
                   </View>
                   {/* 내 카드에 추가하기 버튼 */}
                   <ActionButton

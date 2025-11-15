@@ -1,6 +1,6 @@
-import { Store } from "@/src/constants/storeExamples";
 import Colors from "@/src/styles/colors";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Store } from "@/src/types/Stores";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function StoreBlock({
   store,
@@ -13,12 +13,28 @@ export default function StoreBlock({
 }) {
   return (
     <Pressable onPress={onPress} style={styles.container}>
-      <Text style={styles.storeName}>{store.placeName}</Text>
-      <View style={styles.cardNameContainer}>
-        {store.availableCards.map((card) => (
-          <Text key={card.cardId} style={styles.cardName}>
-            {card.cardName}
-          </Text>
+      <View>
+        <Text style={styles.storeName}>{store.place.place_name}</Text>
+        <Text>
+          {store.place.category_group_name} | {store.place.road_address_name}
+        </Text>
+      </View>
+      <View style={styles.cardContainer}>
+        {store.cards.map((card, index) => (
+          <View key={index}>
+            <Image
+              source={
+                card.imgUrl && card.imgUrl.trim() !== ""
+                  ? { uri: card.imgUrl }
+                  : require("../../assets/images/card_example.png")
+              }
+              style={{
+                width: 88,
+                height: 56,
+                resizeMode: "contain",
+              }}
+            />
+          </View>
         ))}
       </View>
     </Pressable>
@@ -42,8 +58,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 700,
   },
-  cardNameContainer: {
+  cardContainer: {
     flexDirection: "row",
+    paddingHorizontal: 5,
     gap: 5,
   },
   cardName: {

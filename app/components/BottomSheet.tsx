@@ -1,5 +1,6 @@
-import { Store } from "@/src/constants/storeExamples";
+import { Store } from "@/src/types/Stores";
 import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { router } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { StyleSheet } from "react-native";
 import StoreBlock from "./StoreBlock";
@@ -52,15 +53,13 @@ export function BottomSheet({ isVisible, onClose, stores }: BottomSheetProps) {
             <StoreBlock
               key={index}
               store={store}
-              onPress={
-                () => console.log("Store pressed")
-                /*
+              onPress={() =>
                 router.push({
                   pathname: "/StoreDetailScreen",
                   params: {
                     storeData: JSON.stringify(store),
-                  },*/
-                // 추후 파라미터 수정
+                  },
+                })
               }
             />
           ))}

@@ -1,10 +1,9 @@
 import { categories } from "@/src/constants/categories";
-import { Store } from "@/src/constants/storeExamples";
-import { KakaoPlace } from "@/src/hooks/useKakao";
 import useLocaiton from "@/src/hooks/useLocation";
 import { filterOfflineStores, StoreFilters } from "@/src/hooks/useOfflineStore";
 import { CategoryButtonStyles } from "@/src/styles/buttons/CategoryBtn";
 import { MenuButtonStyles } from "@/src/styles/buttons/MenuBtn";
+import { Store } from "@/src/types/Stores";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import * as Location from "expo-location";
 import React, { useEffect, useRef, useState } from "react";
@@ -32,7 +31,6 @@ export default function KakaoMapView() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [stores, setStores] = useState<Store[]>([]);
-  const [storesFromKakao, setStoresFromKakao] = useState<KakaoPlace[]>([]);
 
   const [pageReady, setPageReady] = useState(false);
 
@@ -43,6 +41,9 @@ export default function KakaoMapView() {
   // 검색어 입력 핸들러
   const handleSearchChange = (text: string) => {
     setSearchQuery(text);
+    if (text.trim() !== "") {
+      setSelectedCategory(null);
+    }
   };
 
   // 카테고리 선택 핸들러
@@ -53,26 +54,26 @@ export default function KakaoMapView() {
       setStores([]); // 선택 해제 시 stores 초기화
     } else {
       setSelectedCategory(category);
+      setSearchQuery(""); // 검색어 초기화
     }
   };
 
   // 백엔드 요청 함수
   const fetchResults = async () => {
-    if (!location || !selectedCategory) return;
+    if (!location) return;
+    if (searchQuery.trim() === "" && !selectedCategory) return;
     const storeFilter: StoreFilters = {
-      lat: location.lat,
-      lng: location.lng,
-      cat: selectedCategory,
+      x: location.lng,
+      y: location.lat,
+      query: searchQuery.trim() || undefined,
+      category: selectedCategory || undefined,
     };
 
     console.log("검색 실행:", storeFilter);
 
     try {
       const data = await filterOfflineStores(storeFilter);
-
-      console.log(data);
-
-      setStores(data.stores);
+      setStores(data);
     } catch (error) {
       console.error("검색 요청 실패:", error);
     }
@@ -208,7 +209,7 @@ export default function KakaoMapView() {
                   key={category.value} // 예: cafe
                   title={category.label} // 예: 카페
                   onPress={() => handleCategorySelect(category.code)}
-                  selected={selectedCategory === category.value}
+                  selected={selectedCategory === category.code}
                   stylesSet={CategoryButtonStyles}
                 />
               ))}
@@ -224,7 +225,7 @@ export default function KakaoMapView() {
           </View>
           {/* Bottom Sheet Modal */}
           <BottomSheet
-            isVisible={selectedCategory !== null}
+            isVisible={stores.length > 0}
             onClose={() => {}}
             stores={stores}
           />

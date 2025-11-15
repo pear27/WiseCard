@@ -54,7 +54,8 @@ export interface Card {
   cardName: string | null;
   imgUrl?: string | null;
   cardType: string | null;
-  benefits: Benefit[];
+  benefits?: Benefit[];
+  benefit?: Benefit;
 }
 
 /*
