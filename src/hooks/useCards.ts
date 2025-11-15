@@ -80,15 +80,10 @@ export const getUserCards = async (filters?: CardFilters) => {
     const res = await axiosInstance.get(`/api/cards/user`, {
       params: filters,
     });
-
-    console.log("사용자 등록 카드 목록 응답:", res.data);
-
     res.data.forEach((card: any) => {
       cardIds.push(card.cardId);
     });
 */
-    console.log("등록된 카드 ID 목록:", cardIds);
-
     const detailedCardsRes = await axiosInstance.post(
       `/api/v1/cards/my`,
       { cardIds },

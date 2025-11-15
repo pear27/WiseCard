@@ -30,18 +30,12 @@ export default function OnboardingScreen() {
 
   const handleMessage = async (event: { nativeEvent: { data: any } }) => {
     try {
-      // 카카오 인가 코드
-      const code = event.nativeEvent.data;
-      console.log("✅ Received code:", code);
-
+      const code = event.nativeEvent.data; // 카카오 인가 코드
       const res = await axios.post(
         `https://kauth.kakao.com/oauth/token?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${REDIRECT_URI}&code=${code}&grant_type=authorization_code`
       );
 
-      // 카카오 액세스 토큰
-      console.log("🎉 Kakao Token response:", res.data);
-
-      // 백엔드로 code 전송해서 토큰 받기
+      // 백엔드로 accessToken 전송해서 토큰 받기
       const result = await sendCodeToBackend(res.data.access_token);
       //setShowWebView(false);
       if (result.success && result.tokens) {

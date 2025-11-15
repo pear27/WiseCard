@@ -13,8 +13,6 @@ export async function sendCodeToBackend(
   kakaoAccessToken: string
 ): Promise<LoginResult> {
   try {
-    console.log("Body:", { accessToken: kakaoAccessToken });
-
     const res = await axios.post(`${backend_url}/api/auth/login`, {
       accessToken: kakaoAccessToken,
     });

@@ -112,7 +112,6 @@ export default function MyCardsScreen() {
           onPress: async () => {
             try {
               const result = await removeUserCard(cardList[activeIndex].cardId);
-              console.log(result);
               Alert.alert("완료", "카드가 삭제되었습니다");
               fetchUserCards();
             } catch (err) {

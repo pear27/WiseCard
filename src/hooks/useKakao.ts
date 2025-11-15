@@ -29,8 +29,6 @@ export async function searchPlaces(
   latitude: number,
   longitude: number
 ): Promise<KakaoPlace[]> {
-  console.log(KAKAO_REST_API_KEY);
-  console.log(KAKAO_API_BASE_URL);
   try {
     const response = await axios.get<KakaoApiResponse>(KAKAO_API_BASE_URL, {
       headers: {
