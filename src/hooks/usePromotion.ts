@@ -10,8 +10,6 @@ export const filterCardCompanies = async () => {
   const filteredCardCompanies = cardCompanies.filter((cardCompany) =>
     myCards.some((myCard: Card) => myCard.cardCompany === cardCompany.value)
   );
-  console.log(filteredCardCompanies);
-
   return filteredCardCompanies;
 };
 

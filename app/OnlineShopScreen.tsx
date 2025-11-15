@@ -26,11 +26,9 @@ export default function OnlineShopScreen() {
 
   // 백엔드 요청 함수
   const fetchResults = async () => {
-    console.log("검색 실행:", selectedCategory);
     try {
       const data: Card[] = await filterOnlineStores(selectedCategory);
       const filtered = data.filter((card) => (card.benefits?.length ?? 0) > 0);
-      console.log(filtered);
       setCardList(filtered);
     } catch (error) {
       console.error("검색 요청 실패:", error);

@@ -12,7 +12,6 @@ const BACKEND_URL_V1 = process.env.EXPO_PUBLIC_BACKEND_URL_V1 || "";
 
 export const filterOfflineStores = async (filters: StoreFilters) => {
   const cardIds = await cardStorage.getCardIds();
-  console.log("등록된 카드 ID 목록:", cardIds);
   try {
     const offlineStoresRes = await axiosInstance.post(
       `/api/v1/cards/offline`,
