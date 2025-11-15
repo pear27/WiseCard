@@ -86,13 +86,12 @@ export default function OnlineShopScreen() {
           </View>
         ) : (
           cardList.map((card) => (
-            <View key={card.cardId}>
+            <View key={card.cardId} style={styles.cardBlock}>
               <View
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
                   gap: 10,
-                  marginVertical: 10,
                 }}
               >
                 <Image
@@ -199,6 +198,12 @@ const styles = StyleSheet.create({
   shopContainer: {
     gap: 5,
     paddingBottom: 60,
+  },
+  cardBlock: {
+    paddingVertical: 10,
+    gap: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
   },
   cardImage: {
     width: 110,

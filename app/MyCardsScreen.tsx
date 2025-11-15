@@ -1,10 +1,11 @@
-import { CARD_TYPES, cardCompanies } from "@/src/constants/cardCompanies";
+import { CARD_TYPES } from "@/src/constants/cardCompanies";
 import { categories } from "@/src/constants/categories";
 import {
   CardFilters,
   getUserCards,
   removeUserCard,
 } from "@/src/hooks/useCards";
+import { filterCardCompanies } from "@/src/hooks/usePromotion";
 import { BackButtonStyles } from "@/src/styles/buttons/BackBtn";
 import { CategoryButtonStyles } from "@/src/styles/buttons/CategoryBtn";
 import { DeleteActionButtonStyles } from "@/src/styles/buttons/DeleteActionBtn";
@@ -24,13 +25,17 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ActionButton, CategoryButton, MenuButton } from "./components/Button";
-import { Dropdown } from "./components/DropDown";
+import { BankOption, Dropdown } from "./components/DropDown";
 import SearchBar from "./components/SearchBar";
 
 const CARD_PREVIEW_WIDTH = 25;
 const CARD_SPACING = 10;
 
 export default function MyCardsScreen() {
+  const [filteredCardCompanies, setFilteredCardCompanies] = useState<
+    BankOption[]
+  >([]);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBank, setSelectedBank] = useState<string | null>(null);
   const [selectedCardType, setSelectedCardType] = useState<string | null>(null);
@@ -131,6 +136,15 @@ export default function MyCardsScreen() {
   );
 
   useEffect(() => {
+    const loadCompanies = async () => {
+      const result = await filterCardCompanies();
+      setFilteredCardCompanies(result);
+    };
+
+    loadCompanies();
+  }, [cardList]);
+
+  useEffect(() => {
     if (cardList.length === 0 || cardWidth === 0) {
       setSnapOffsets([]);
       return;
@@ -166,7 +180,7 @@ export default function MyCardsScreen() {
         />
         <View style={styles.categoryContainer}>
           <Dropdown
-            options={cardCompanies}
+            options={filteredCardCompanies}
             selectedValue={selectedBank}
             onSelect={setSelectedBank}
             placeholder="카드사 선택"
@@ -381,7 +395,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const CardCategoryStyles = StyleSheet.create({
+export const CardCategoryStyles = StyleSheet.create({
   materialButton: {
     backgroundColor: Colors.BACKGROUND_LIGHT,
     paddingHorizontal: 10,

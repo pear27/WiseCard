@@ -5,7 +5,6 @@ const BACKEND_URL_V1 = process.env.EXPO_PUBLIC_BACKEND_URL_V1 || "";
 
 export const filterOnlineStores = async (category: string | null) => {
   const cardIds = await cardStorage.getCardIds();
-  console.log("등록된 카드 ID 목록:", cardIds);
 
   const params: Record<string, string> = {};
   if (category) {

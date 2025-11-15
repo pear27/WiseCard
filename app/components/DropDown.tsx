@@ -1,14 +1,14 @@
 import Colors from "@/src/styles/colors";
 import { useState } from "react";
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
-interface BankOption {
+export interface BankOption {
   label: string; // 한글 표시명
   value: string; // 영어 값
 }
