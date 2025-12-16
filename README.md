@@ -170,7 +170,7 @@ Expo Application Services(EAS)를 이용하면 클라우드에서 앱을 컴파�
   # eas 로그인
 ```
 
-현재 프로젝트에 EAS config(EAS 설정)를 생성하기 위해 아래 명령어를 입력합니다.
+현재 프로젝트에 EAS config(EAS 설정)를 생성하기 위해 아래 명령어를 입력합니다. platform은 Android를 선택합니다.
 
 ```bash
  eas build:configure
