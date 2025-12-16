@@ -31,6 +31,7 @@ export default function KakaoMapView() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [stores, setStores] = useState<Store[]>([]);
+  const [clickedStore, setClickedStore] = useState<Store[] | null>(null);
 
   const [pageReady, setPageReady] = useState(false);
 
@@ -52,6 +53,7 @@ export default function KakaoMapView() {
     if (selectedCategory === category) {
       setSelectedCategory(null);
       setStores([]); // 선택 해제 시 stores 초기화
+      setClickedStore(null);
     } else {
       setSelectedCategory(category);
       setSearchQuery(""); // 검색어 초기화
@@ -86,6 +88,7 @@ export default function KakaoMapView() {
 
     // stores 초기화 - 현재 위치만 보여주는 상태로 복구
     setStores([]);
+    setClickedStore(null);
     setSearchQuery(""); // 검색어도 초기화
     setSelectedCategory(null); // 카테고리 선택도 해제
 
@@ -139,10 +142,20 @@ export default function KakaoMapView() {
   };
 
   const onMessage = (event: any) => {
-    const data = String(event.nativeEvent.data);
-    if (data === "READY") setPageReady(true);
+    const data = event.nativeEvent.data;
+    if (String(data) === "READY") {
+      setPageReady(true);
+      return;
+    }
 
-    console.log("WebView에서 받은 메시지:", data);
+    try {
+      const parsedData = JSON.parse(data);
+      if (parsedData.type === "PIN_CLICK") {
+        setClickedStore([parsedData.payload]); // 클릭된 장소만 stores에 설정
+      }
+    } catch (error) {
+      console.error("JSON 파싱 실패:", error);
+    }
   };
 
   useEffect(() => {
@@ -227,7 +240,7 @@ export default function KakaoMapView() {
           <BottomSheet
             isVisible={stores.length > 0}
             onClose={() => {}}
-            stores={stores}
+            stores={clickedStore ? clickedStore : stores}
           />
         </View>
       </BottomSheetModalProvider>
