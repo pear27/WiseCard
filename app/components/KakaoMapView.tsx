@@ -6,7 +6,8 @@ import { MenuButtonStyles } from "@/src/styles/buttons/MenuBtn";
 import { Store } from "@/src/types/Stores";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import * as Location from "expo-location";
-import React, { useEffect, useRef, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   ScrollView as RNScrollView,
@@ -170,6 +171,15 @@ export default function KakaoMapView() {
       }
     }
   }, [stores, pageReady]);
+
+  // 화면이 포커스될 때마다 실행
+  useFocusEffect(
+    useCallback(() => {
+      if (pageReady) {
+        handleRefreshLocation();
+      }
+    }, [pageReady])
+  );
 
   useEffect(() => {
     if (selectedCategory) {
