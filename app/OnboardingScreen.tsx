@@ -1,5 +1,4 @@
 import { useAuth } from "@/src/contexts/AuthContext";
-import { sendCodeToBackend } from "@/src/hooks/useAuth";
 import { ksiButtonStyles } from "@/src/styles/buttons/KakaoLoginBtn";
 import Colors from "@/src/styles/colors";
 import axios from "axios";
@@ -35,15 +34,16 @@ export default function OnboardingScreen() {
         `https://kauth.kakao.com/oauth/token?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${REDIRECT_URI}&code=${code}&grant_type=authorization_code`
       );
 
+      router.replace("/");
       // 백엔드로 accessToken 전송해서 토큰 받기
-      const result = await sendCodeToBackend(res.data.access_token);
+      /*const result = await sendCodeToBackend(res.data.access_token);
       //setShowWebView(false);
       if (result.success && result.tokens) {
         await login(result.tokens.accessToken, result.tokens.refreshToken);
         router.replace("/");
       } else {
         Alert.alert("로그인 실패", result.error);
-      }
+      }*/
     } catch (error) {
       console.error("❌ Unexpected Error:", error);
       Alert.alert(
