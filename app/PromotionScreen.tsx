@@ -88,8 +88,9 @@ export default function PromotionScreen() {
         contentContainerStyle={styles.eventContainer}
       >
         {promotions &&
-          promotions.map((prom) => (
+          promotions.map((prom, index) => (
             <Pressable
+              key={index}
               onPress={() => {
                 if (prom.url) {
                   Linking.openURL(prom.url);
