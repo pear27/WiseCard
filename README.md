@@ -179,7 +179,7 @@ Expo Application Services(EAS)를 이용하면 클라우드에서 앱을 컴파�
 아래 명령어를 입력하여 현재 프로젝트를 클라우드에서 컴파일하고 빌드합니다.
 
 ```bash
- eas build --platform android --profile development
+ eas build --platform android --profile preview
 ```
 
 최초 실행 시 설치를 요구하는 파일이 있으면 설치해주고, keystore도 함께 생성합니다.
