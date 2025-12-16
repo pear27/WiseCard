@@ -103,15 +103,33 @@ npm install --global expo-cli
      # Install the command line tools
 ```
 
+아래 명령어로 설치된 버전을 확인할 수 있습니다.
+
+```bash
+ expo --version
+```
+
 테스트할 모바일 기기(Android)에 Expo(혹은 Expo Go, 스토어에서 검색)를 설치하고, 계정을 생성합니다.
 
 ### 3. 프로젝트 의존성 설치
+
+git clone한 프로젝트 파일의 루트로 이동한 뒤, 아래 명령어를 입력하여 프로젝트 의존성을 설치합니다.
 
 ```bash
 npm install
 ```
 
-### 4. 프로젝트 실행하기
+### 4. 환경 변수 설정
+
+본 프로젝트는 실행을 위해 환경 변수 설정이 필요합니다.
+
+루트 디렉토리에 제공된 `.env.example` 파일을 복사하여 `.env` 파일을 생성한 뒤, 각 항목에 본인의 환경에 맞는 값을 입력합니다.
+
+```bash
+copy .env.example .env
+```
+
+### 5. 프로젝트 실행하기
 
 ```bash
  expo login
