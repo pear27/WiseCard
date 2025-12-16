@@ -111,8 +111,8 @@ export default function PromotionScreen() {
                 {prom.description}
               </Text>
               <Text>
-                {formatKoreanDate(prom.startDate)} ~{" "}
-                {formatKoreanDate(prom.endDate)}
+                {prom.startDate ? formatKoreanDate(prom.startDate) : null} ~{" "}
+                {prom.endDate ? formatKoreanDate(prom.endDate) : null}
               </Text>
             </Pressable>
           ))}
