@@ -1,11 +1,7 @@
 import { BackButtonStyles } from "@/src/styles/buttons/BackBtn";
 import Colors from "@/src/styles/colors";
 import { getAppInfo } from "@/src/utils/appInfo";
-import {
-  getAccessToken,
-  getRefreshToken,
-  removeTokens,
-} from "@/src/utils/authStorage";
+import { removeTokens } from "@/src/utils/authStorage";
 import { router } from "expo-router";
 import React from "react";
 import {
@@ -81,22 +77,6 @@ export default function SettingsScreen() {
         <Pressable style={styles.itemContainer} onPress={() => handleLogout()}>
           <Text style={styles.itemText}>로그아웃</Text>
         </Pressable>
-        <Text
-          onPress={async () => {
-            const accessToken = await getAccessToken();
-            console.log(accessToken);
-          }}
-        >
-          get access token
-        </Text>
-        <Text
-          onPress={async () => {
-            const refreshToken = await getRefreshToken();
-            console.log(refreshToken);
-          }}
-        >
-          get refresh token
-        </Text>
         <View style={{ alignItems: "center", marginTop: 20 }}>
           <Text style={styles.appInfoText}>
             Version: {appInfo.version}
