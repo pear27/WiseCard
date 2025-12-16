@@ -106,8 +106,10 @@ export default function OnlineShopScreen() {
               </View>
               <View style={{ gap: 7 }}>
                 {/* 혜택 targets */}
-                <View
-                  style={{ flexDirection: "row", flexWrap: "wrap", gap: 5 }}
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ gap: 5 }}
                 >
                   {card.benefits &&
                     card.benefits.map(
@@ -135,7 +137,7 @@ export default function OnlineShopScreen() {
                           </View>
                         ))
                     )}
-                </View>
+                </ScrollView>
                 {/* 혜택 summary */}
                 <View>
                   {card.benefits &&
